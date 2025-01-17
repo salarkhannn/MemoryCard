@@ -1,9 +1,13 @@
-import { useEffect, useState } from "react";
+import { isValidElement, useEffect, useState } from "react";
 import uniqid from "uniqid";
 
 
 //total characters in API = 1429
-const TOTAL_CHARACTERS = 1429;
+// const TOTAL_CHARACTERS = 1429;
+const TOTAL_CHARACTERS = 50;
+
+// goku api: https://dragonball-api.com/api/characters/1
+// naruto api: https://narutodb.xyz/api/character/
 
 export default async function fetchNaruto() {
     // const [characters, setCharacters] = useState([]);
@@ -11,10 +15,11 @@ export default async function fetchNaruto() {
 
     const getCharacter = async ({id}) => {
         try {
-            const response = await fetch(`https://narutodb.xyz/api/character/${id}`);
+            const response = await fetch(`https://dragonball-api.com/api/characters/${id}`);
             const data = await response.json();
             const name = data.name || "Unkown Character";
-            const image = data.images[0];
+            // const image = data.images[0];
+            const image = data.image;
 
             // verify the image url is accessible
             const isImageValid = await new Promise((resolve) => {
@@ -49,7 +54,13 @@ export default async function fetchNaruto() {
 
                 // Fetch and add character if valid
                 const character = await getCharacter({ id: randomId });
-                if (character && character.image && character.name) charactersToShow.push(character);
+                // if (character && character.image && character.name) charactersToShow.push(character);
+                if (character) {
+                    const isValidImage = await validateImage(character.image);
+                    if (isValidImage) {
+                        charactersToShow.push(character);
+                    }
+                }
             }
 
             attempts++;
@@ -61,6 +72,15 @@ export default async function fetchNaruto() {
 
         return charactersToShow;
     }
+
+    const validateImage = async (imageUrl) => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.onload = () => resolve(true);
+            img.onerror = () => resolve(false);
+            img.src = imageUrl;
+        });
+    };
 
     return {getCharacter, getRandomCharacters};
 }
