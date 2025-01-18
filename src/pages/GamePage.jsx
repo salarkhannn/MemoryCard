@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Card from "../components/Card";
 import Header from "../components/Header";
 import fetchNaruto from "../utils/naruto";
+import Footer from "../components/Footer";
 
 export default function GamePage(){
     const [cards, setCards] = useState([]);
@@ -10,6 +11,8 @@ export default function GamePage(){
     const [bestScore, setBestScore] = useState(0);
     const [round, setRound] = useState(1);
     const [gameFinished, setGameFinished] = useState(false);
+    const [isFlipping, setIsFlipping] = useState(false);
+    const [shouldFlipAll, setShouldFlipAll] = useState(false);
 
     useEffect(() => {
         // Load new Cards at the start of the game
@@ -17,31 +20,39 @@ export default function GamePage(){
             const {getRandomCharacters} = await fetchNaruto();
             const newCards = await getRandomCharacters(8);
             setCards(newCards);
+            setGameFinished(false);
         };
-        fetchCards();
+        
+        if (gameFinished || cards.length === 0) {
+            fetchCards();
+        }
+
     }, [gameFinished]);
 
     // using Fisher-Yates shuffle
     const shuffleCards = ({ cards }) => {
-        console.log(`Initial cards: ${cards}`);
         let currentIndex = cards.length;
-    
-        // Fisher-Yates Shuffle Algorithm
+        const cardsCopy = [...cards];
+   
         while (currentIndex != 0) {
             let randomIndex = Math.floor(Math.random() * currentIndex);
             currentIndex--;
-    
-            // Proper array destructuring to swap elements
-            [cards[currentIndex], cards[randomIndex]] = [cards[randomIndex], cards[currentIndex]];
-            console.log(`Cards inside loop: ${cards}`);
+            [cardsCopy[currentIndex], cardsCopy[randomIndex]] = 
+                [cardsCopy[randomIndex], cardsCopy[currentIndex]];
         }
-    
-        console.log(`Shuffled cards: ${cards}`);
-        return cards;
+   
+        return cardsCopy;
     };
     
 
-    const handleCardClick = (id) => {
+    const handleCardClick = async (id) => {
+        if (isFlipping) return; // prevent clicking during flip
+
+        setIsFlipping(true);
+        setShouldFlipAll(true);
+
+        await new Promise(resolve => setTimeout(resolve, 500)); // simulate a flip animation
+
         if (selectedCards.has(id)) {
             // Game Over
             alert("You lost!");
@@ -55,9 +66,9 @@ export default function GamePage(){
             setSelectedCard((prev) => new Set(prev).add(id));
             setScore((prev) => prev + 1);
             setRound((prev) => prev + 1);
-            console.log(`Before Shuffle: ${JSON.stringify(cards)}`);
-            setCards(shuffleCards({ cards: cards }));
-            console.log(`After Shuffle: ${JSON.stringify(cards)}`);
+
+
+            setCards(shuffleCards({ cards }));
 
             if (score + 1 === cards.length) {
                 alert("You won!");
@@ -68,16 +79,27 @@ export default function GamePage(){
                 setGameFinished(true);
             }
         }
-    }
+
+        await new Promise(resolve => setTimeout(resolve, 100));
+        setShouldFlipAll(false);
+        setIsFlipping(false);
+    };
 
     return (
-        <div className="game-page">
+        <div className="game-page min-h-screen flex flex-col">
             <Header score={score} bestScore={bestScore} round={round} />
-            <div className="cards-container flex flex-row justify-center ">
+            <div className="cards-container flex flex-row justify-center items-center">
                 {cards.map((card) => (
-                    <Card key={card.id} card={card} onCardClick={handleCardClick} />
+                    <Card
+                        key={card.id}
+                        card={card}
+                        onCardClick={handleCardClick}
+                        isFlipping={isFlipping}
+                        shouldFlipAll={shouldFlipAll}
+                    />
                 ))}
             </div>
+            <Footer />
         </div>
     );
 }
