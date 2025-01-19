@@ -4,44 +4,30 @@ import Header from "../components/Header";
 import fetchNaruto from "../utils/naruto";
 import Footer from "../components/Footer";
 
-export default function GamePage(){
-    const [cards, setCards] = useState([]);
+export default function GamePage({ cards, setCards, setGameFinished }){
+    // const [cards, setCards] = useState([]);
     const [selectedCards, setSelectedCard] = useState(new Set());
     const [score, setScore] = useState(0);
-    const [bestScore, setBestScore] = useState(0);
+    const [bestScore, setBestScore] = useState(() => {
+        const saveBestScore = localStorage.getItem('bestScore');
+        return saveBestScore ? JSON.parse(saveBestScore) : 0;
+    });
     const [round, setRound] = useState(1);
-    const [gameFinished, setGameFinished] = useState(false);
+    // const [gameFinished, setGameFinished] = useState(false);
     const [isFlipping, setIsFlipping] = useState(false);
     const [shouldFlipAll, setShouldFlipAll] = useState(false);
 
     useEffect(() => {
-        // Load new Cards at the start of the game
-        const fetchCards = async () => {
-            const {getRandomCharacters} = await fetchNaruto();
-            const newCards = await getRandomCharacters(8);
-            setCards(newCards);
-            setGameFinished(false);
-        };
-        
-        if (gameFinished || cards.length === 0) {
-            fetchCards();
-        }
+        localStorage.setItem('bestScore', JSON.stringify(bestScore));
+    }, [bestScore]);
 
-    }, [gameFinished]);
-
-    // using Fisher-Yates shuffle
     const shuffleCards = ({ cards }) => {
-        let currentIndex = cards.length;
-        const cardsCopy = [...cards];
-   
-        while (currentIndex != 0) {
-            let randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex--;
-            [cardsCopy[currentIndex], cardsCopy[randomIndex]] = 
-                [cardsCopy[randomIndex], cardsCopy[currentIndex]];
+        const shuffledCards = [...cards];
+        for (let i = shuffledCards.length - 1; i > 0; i--){
+            const randomIndex = Math.floor(Math.random() * (i + 1));
+            [shuffledCards[i], shuffledCards[randomIndex]] = [shuffledCards[randomIndex], shuffledCards[i]];
         }
-   
-        return cardsCopy;
+        return shuffledCards;
     };
     
 
@@ -67,8 +53,8 @@ export default function GamePage(){
             setScore((prev) => prev + 1);
             setRound((prev) => prev + 1);
 
-
-            setCards(shuffleCards({ cards }));
+            const shuffled = shuffleCards({cards: cards});
+            setCards(shuffled);
 
             if (score + 1 === cards.length) {
                 alert("You won!");
@@ -86,7 +72,7 @@ export default function GamePage(){
     };
 
     return (
-        <div className="game-page min-h-screen flex flex-col">
+        <div className="game-page min-h-screen flex flex-col justify-between">
             <Header score={score} bestScore={bestScore} round={round} />
             <div className="cards-container flex flex-row justify-center items-center">
                 {cards.map((card) => (

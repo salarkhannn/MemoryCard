@@ -10,8 +10,32 @@
     justify-content: space-between;
 } */
 
+@font-face {
+    font-family: 'Saiyan-Sans';
+    src: url('../src/assets/Saiyan-Sans.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Supersonic';
+    src: url('../src/assets/SupersonicRocketship.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    overflow: hidden;
+}
+
 .app {
-    /* background-image: url("./src/assets/bg2.png"); */
+    background-image: url("./src/assets/bg.jpg");
     width: 100vw;
     height: auto;
+    font-family: "Supersonic";
+    letter-spacing: 1px;
+}
+
+.cards-container{
+    width: 100vw;
 }

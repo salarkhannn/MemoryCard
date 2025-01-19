@@ -1,8 +1,18 @@
+.tilt-container {
+    width: 218.3px; /* Same as card width */
+    height: 205px; /* Same as card height */
+    border-radius: 10px; /* Matches card corner radius */
+    position: relative; /* Necessary for the child elements */
+    margin: 10px;
+}
+
+
 .card-container {
     position: relative;
-    width: 250px;
-    height: 328px;
-    border: 2px solid black;
+    width: 218.3px;
+    height: 205px;
+    /* border: 2px solid black; */
+    border-radius: 8px;
     margin: 10px;
     perspective: 1000px;
 }
@@ -14,10 +24,13 @@
     transform-style: preserve-3d;
     transition: all 0.5s ease;
     position: relative;
+    /* border: 2px solid black; */
+    /* border-radius: 10px; */
 }
 
 .card.flipped {
     transform: rotateY(180deg);
+    z-index: 0;
 }
 
 /* .card:hover{
@@ -34,6 +47,9 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    border: 2px solid black;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, 0.7);
 }
 
 .card-image {
@@ -43,13 +59,23 @@
     /* Optional: add padding if needed */
     padding: 0px;
     padding-top: 10px;
+    z-index: 1;
 }
 
+.card-effect{
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
 
 .card-name {
     /* Add styles for the name to ensure it doesn't overlap with the image */
     padding: 10px;
     text-align: center;
+    font-size: 30px;
+    z-index: 1;
+    color: #000000;
+    -webkit-text-stroke: 1px black;
 }
 .card-back{
     display: flex;
@@ -61,11 +87,15 @@
     background: white;
     color: darkgrey;
     transform: rotateY(180deg);
-    border: 2px solid black;
+    /* border: 2px solid black; */
+    border-radius: 10px;
+    z-index: 2;
 }
 
 .card-back img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 10px;
+    z-index: 2;
 }

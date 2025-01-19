@@ -40,6 +40,7 @@ import './index.css';
 import GamePage from './pages/GamePage';
 import LoadingPage from './pages/LoadingPage';
 import fetchNaruto from './utils/naruto';
+import bgVideo from './assets/bgVideo.mp4';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -49,6 +50,7 @@ function App() {
   useEffect(() => {
     const fetchCards = async () => {
       try {
+        setIsLoading(true);
         const { getRandomCharacters } = await fetchNaruto();
         const newCards = await getRandomCharacters(8);
         setCards(newCards); // Set fetched cards
@@ -56,18 +58,21 @@ function App() {
         console.error("Error fetching characters:", error);
       } finally {
         setIsLoading(false); // Stop loading after cards are fetched
+        setGameFinished(false);
       }
     };
 
-    fetchCards();
-  }, []);
+    if (gameFinished || cards.length === 0){
+      fetchCards();
+    }
+  }, [gameFinished]);
 
   return (
     <div className="app min-h-screen">
       {isLoading ? (
         <LoadingPage />
       ) : (
-        <GamePage cards={cards} setGameFinished={setGameFinished} />
+        <GamePage cards={cards} setCards={setCards} setGameFinished={setGameFinished} />
       )}
     </div>
   );
