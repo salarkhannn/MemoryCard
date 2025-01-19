@@ -2,23 +2,16 @@ import { isValidElement, useEffect, useState } from "react";
 import uniqid from "uniqid";
 
 
-//total characters in API = 1429
-// const TOTAL_CHARACTERS = 1429;
 const TOTAL_CHARACTERS = 50;
 
-// goku api: https://dragonball-api.com/api/characters/1
-// naruto api: https://narutodb.xyz/api/character/
 
-export default async function fetchNaruto() {
-    // const [characters, setCharacters] = useState([]);
-    // const TOTAL_CHARACTERS = 1429;
+export default async function fetchGoku() {
 
     const getCharacter = async ({id}) => {
         try {
             const response = await fetch(`https://dragonball-api.com/api/characters/${id}`);
             const data = await response.json();
             const name = data.name || "Unkown Character";
-            // const image = data.images[0];
             const image = data.image;
 
             // verify the image url is accessible
@@ -54,7 +47,6 @@ export default async function fetchNaruto() {
 
                 // Fetch and add character if valid
                 const character = await getCharacter({ id: randomId });
-                // if (character && character.image && character.name) charactersToShow.push(character);
                 if (character) {
                     const isValidImage = await validateImage(character.image);
                     if (isValidImage) {

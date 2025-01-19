@@ -53,7 +53,6 @@ export default function GamePage({ cards, setCards, gameFinished, setGameFinishe
             setBestScore(Math.max(bestScore, score));
             setIsWin(false);
             setShowGameOver(true);
-            // setGameFinished(true);
         } else {
             setSelectedCard(prev => new Set(prev).add(id));
             setScore(prev => prev + 1);
@@ -66,7 +65,6 @@ export default function GamePage({ cards, setCards, gameFinished, setGameFinishe
                 setBestScore(Math.max(bestScore, score + 1));
                 setIsWin(true);
                 setShowGameOver(true)
-                // setGameFinished(true);
             }
         }
 

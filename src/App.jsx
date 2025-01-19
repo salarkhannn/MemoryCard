@@ -4,7 +4,7 @@ import './App.css';
 import './index.css';
 import GamePage from './pages/GamePage';
 import LoadingPage from './pages/LoadingPage';
-import fetchNaruto from './utils/naruto';
+import fetchGoku from './utils/goku';
 import bgVideo from './assets/bgVideo.mp4';
 
 function App() {
@@ -16,7 +16,7 @@ function App() {
     const fetchCards = async () => {
       try {
         setIsLoading(true);
-        const { getRandomCharacters } = await fetchNaruto();
+        const { getRandomCharacters } = await fetchGoku();
         const newCards = await getRandomCharacters(8);
         setCards(newCards); // Set fetched cards
       } catch (error) {
